@@ -1,11 +1,12 @@
 
 
 function createVElement(tag, config, children = null) {
-	const {className} = config;
+	const {className, style} = config;
 
 	return {
-		tag: tag, 
+		tag,
 		className,
+		style,
 		dom: null,
 		props: {
 			children,
@@ -14,11 +15,16 @@ function createVElement(tag, config, children = null) {
 }
 
 function mountVElement(vElement, parentDOMNode) {
-	const {tag, className, props} = vElement;
+	const {tag, className, style, props} = vElement;
 	const domNode = document.createElement(tag);
 	vElement.dom = domNode;
 	if(className !== undefined) {
 		domNode.className = className;
+	}
+	if(style !== undefined) {
+		Object.keys(style).forEach(function(key) {
+			domNode.style[key] = style[key];
+		});
 	}
 	if(props.children) {
 		props.children.forEach(function(child) {
@@ -33,10 +39,13 @@ function mountVElement(vElement, parentDOMNode) {
 //------------------- test app
 (function testApp() {
 	const parent = document.querySelector('#app');
-	const app = createVElement('div', {className: 'my-class'}, [
-		createVElement('h2', {className: 'my-h2'}),
+	const app = createVElement('div', {className: 'my-class', style: {backgroundColor: 'green', height: '100px'}}, [
+		createVElement('h2', {className: 'my-h2', style: {color: 'black'}}),
 		createVElement('p', {className: 'my-p'}),
 		]);
 	mountVElement(app, parent);
+
+	// app.dom.style = 'background-color: red';
+	console.log(app.dom);
 })();
 
