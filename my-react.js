@@ -27,11 +27,28 @@ function mountVElement(vElement, parentDOMNode) {
 		});
 	}
 	if(props.children) {
-		props.children.forEach(function(child) {
-			mountVElement(child, domNode);
-		});
+		if(props.children.length && typeof props.children !== 'string') {
+			props.children.forEach(function(child) {
+				mount(child, domNode);
+			});
+		} else {
+			mount(props.children, domNode);
+		}
+		
 	}
 	parentDOMNode.appendChild(domNode);
+}
+
+function mountVText(vText, parentDOMNode) {
+	parentDOMNode.textContent = vText;
+}
+
+function mount(input, parentDOMNode) {
+	if(typeof input === 'string' || typeof input === 'number') {
+		mountVText(input, parentDOMNode);
+	} else {
+		mountVElement(input, parentDOMNode);
+	}
 }
 
 
@@ -40,8 +57,8 @@ function mountVElement(vElement, parentDOMNode) {
 (function testApp() {
 	const parent = document.querySelector('#app');
 	const app = createVElement('div', {className: 'my-class', style: {backgroundColor: 'green', height: '100px'}}, [
-		createVElement('h2', {className: 'my-h2', style: {color: 'black'}}),
-		createVElement('p', {className: 'my-p'}),
+		createVElement('h2', {className: 'my-h2', style: {color: 'black'}}, 'react header'),
+		createVElement('p', {className: 'my-p'}, 'react paragraph'),
 		]);
 	mountVElement(app, parent);
 
