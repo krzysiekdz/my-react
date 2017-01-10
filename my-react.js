@@ -93,6 +93,28 @@ function mount(input, parentDOMNode) {
 	}
 }
 
+function update(prevElement, nextElement) {
+	if(prevElement.tag === nextElement.tag) {
+		if(typeof prevElement.tag === 'string') {
+			updateVElement(prevElement, nextElement);
+		}
+	} else {
+
+	}
+}
+
+function updateVElement(prevElement, nextElement) {
+	const dom = prevElement.dom;
+	nextElement.dom = dom;
+
+	const nextStyle = nextElement.style;
+	if(prevElement.style !== nextStyle) {//if styles are diffrent, modifies the DOM
+		Object.keys(nextStyle).forEach(prop => {
+			dom.style[prop] = nextStyle[prop];
+		});
+	}
+}
+
 class Component {
 	constructor(props) {
 		this.props = props || {};
@@ -111,16 +133,19 @@ class Component {
 			this.state = this._pendingState;
 		}
 		this._pendingState = null;
-		const nextRenderedElement = this.render();
-		this._currentElement = nextRenderedElement;
+		const nextElement = this.render();
+		this._currentElement = nextElement;
 
-		mount(nextRenderedElement, this._parentNode);
+		// mount(nextRenderedElement, this._parentNode);
+		update(prevElement, nextElement, this._parentNode);
 	}
 
 	setState(partialNewState) {
 		this._pendingState = Object.assign({}, this.state, partialNewState);
 		this.updateComponent();
 	}
+
+
 
 	//will be overridden
 	render() {}
@@ -140,17 +165,18 @@ class App extends Component {
 			ctr : 1,
 		};
 
-		// setInterval(() => {
-		// 	this.setState({ctr: this.state.ctr +1});
-		// }, 2000);
+		setInterval(() => {
+			this.setState({ctr: this.state.ctr +1});
+		}, 2000);
 	} 
 
 	render() {
-		const message = this.props.message;
-		return createElement('div', {style: {backgroundColor: 'blue', height: '100px'}}, 
+		const {message} = this.props;
+		const {ctr} = this.state;
+		return createElement('div', {style: {backgroundColor: 'blue', height:  + (100 + ctr) + 'px'}}, 
 			[
 				createElement('h1', {}, message),
-				createElement('p', {}, this.state.ctr),
+				createElement('p', {}, ctr),
 			]
 			);
 	}
