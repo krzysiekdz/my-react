@@ -68,10 +68,11 @@ function mountVComponent(vComponent, parentDOMNode) {
 	const Component = tag;
 	const instance = new Component(props);
 
-	console.log(instance);
+	// console.log(instance);
 
 	const nextRenderedElement = instance.render();
 	instance._currentElement = nextRenderedElement;
+	console.log(nextRenderedElement);
 	instance._parentNode = parentDOMNode;
 
 	const dom = mount(nextRenderedElement, parentDOMNode);
@@ -98,7 +99,7 @@ function update(prevElement, nextElement) {
 		if(typeof prevElement.tag === 'string') {
 			updateVElement(prevElement, nextElement);
 		}
-	} else {
+	} else { //brakuje rozwiązania dla sytuacji gdy update-ujemy komponent, if wyzej updateuje jedynie wirtualny element
 
 	}
 }
@@ -113,6 +114,42 @@ function updateVElement(prevElement, nextElement) {
 			dom.style[prop] = nextStyle[prop];
 		});
 	}
+
+	if(nextElement.props.children) {
+		updateChildren(prevElement.props.children, nextElement.props.children, dom);
+	}
+
+}
+
+function updateChildren(prevChildren, nextChildren, parentDOMNode) {
+	if(!Array.isArray(nextChildren)) {
+		nextChildren = [nextChildren];
+	}
+	if(!Array.isArray(prevChildren)) {
+		prevChildren = [prevChildren];
+	}
+
+	for(let i = 0; i < nextChildren.length; i++) {
+		const next = nextChildren[i];
+		const prev = prevChildren[i];
+
+		if((typeof next === 'string' && typeof prev === 'string')  || 
+			(typeof next === 'number' && typeof prev === 'number')
+			) {
+			updateVText(prev, next, parentDOMNode);
+		} else {
+			update(prev, next);
+		}
+	}
+}
+
+function updateVText(prevText, nextText, parentDOMNode) {
+	if(prevText !== nextText) {
+		parentDOMNode.firstChild.nodeValue = nextText;
+		// parentDOMNode.textContent = nextText;
+		// console.log(nextText);
+	}
+	// console.log(nextText);
 }
 
 class Component {
@@ -156,13 +193,26 @@ class Component {
 //------------------- test app
 
 
+class Header extends Component {
+	constructor(props) {
+		super(props);
+	}
+
+	render() {
+		return createElement(
+				'h2', 
+				{style: {color: 'red', height: (this.props.ctr + 20) + 'px'}},
+				`the count is ${this.props.ctr}`);
+	}
+}
+
 //komponent tworzy po prostu za pomoca render, elementy i przyczepia je w dom;
 //chodzi o to, ze umozliwa on juz dynamiczne działanie strony
 class App extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			ctr : 1,
+			ctr : 2,
 		};
 
 		setInterval(() => {
@@ -177,6 +227,7 @@ class App extends Component {
 			[
 				createElement('h1', {}, message),
 				createElement('p', {}, ctr),
+				createElement(Header, {ctr: ctr}),
 			]
 			);
 	}
