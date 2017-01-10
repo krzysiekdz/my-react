@@ -67,16 +67,23 @@ function mountVComponent(vComponent, parentDOMNode) {
 
 	const Component = tag;
 	const instance = new Component(props);
-	const currentElement = instance.render();
-	const dom = mount(currentElement, parentDOMNode);
+
+	console.log(instance);
+
+	const nextRenderedElement = instance.render();
+	instance._currentElement = nextRenderedElement;
+	instance._parentNode = parentDOMNode;
+
+	const dom = mount(nextRenderedElement, parentDOMNode);
 	vComponent._instance = instance;
 	vComponent.dom = dom;
-	parentDOMNode.appendChild(dom);
 
+	parentDOMNode.appendChild(dom);
 	return dom;
 }	
 
 function mount(input, parentDOMNode) {
+	// console.log(input);
 	if(typeof input === 'string' || typeof input === 'number') {
 		return mountVText(input, parentDOMNode);
 	} else if (typeof input.tag === 'function'){
@@ -86,14 +93,36 @@ function mount(input, parentDOMNode) {
 	}
 }
 
-
 class Component {
 	constructor(props) {
 		this.props = props || {};
-	}
-	setState(partialNewState) {
+		this.state = {};
 
+		this._pendingState = null;
+		this._currentElement = null;
+		this._parentNode = null;
 	}
+
+	updateComponent() {
+		const prevState = this.state;
+		const prevElement = this._currentElement;
+
+		if(this._pendingState !== prevState) {
+			this.state = this._pendingState;
+		}
+		this._pendingState = null;
+		const nextRenderedElement = this.render();
+		this._currentElement = nextRenderedElement;
+
+		mount(nextRenderedElement, this._parentNode);
+	}
+
+	setState(partialNewState) {
+		this._pendingState = Object.assign({}, this.state, partialNewState);
+		this.updateComponent();
+	}
+
+	//will be overridden
 	render() {}
 }
 
@@ -101,10 +130,29 @@ class Component {
 
 //------------------- test app
 
+
+//komponent tworzy po prostu za pomoca render, elementy i przyczepia je w dom;
+//chodzi o to, ze umozliwa on juz dynamiczne działanie strony
 class App extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			ctr : 1,
+		};
+
+		// setInterval(() => {
+		// 	this.setState({ctr: this.state.ctr +1});
+		// }, 2000);
+	} 
+
 	render() {
+		const message = this.props.message;
 		return createElement('div', {style: {backgroundColor: 'blue', height: '100px'}}, 
-			createElement('h1', {}, this.props.message));
+			[
+				createElement('h1', {}, message),
+				createElement('p', {}, this.state.ctr),
+			]
+			);
 	}
 }
 
