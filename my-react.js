@@ -98,9 +98,10 @@ function update(prevElement, nextElement) {
 	if(prevElement.tag === nextElement.tag) {
 		if(typeof prevElement.tag === 'string') {
 			updateVElement(prevElement, nextElement);
+		} else if (typeof prevElement.tag === 'function') { //brakuje rozwiązania dla sytuacji gdy update-ujemy komponent, if wyzej updateuje jedynie wirtualny element
+			updateVComponent(prevElement, nextElement);
 		}
-	} else { //brakuje rozwiązania dla sytuacji gdy update-ujemy komponent, if wyzej updateuje jedynie wirtualny element
-
+	}  else {
 	}
 }
 
@@ -119,6 +120,22 @@ function updateVElement(prevElement, nextElement) {
 		updateChildren(prevElement.props.children, nextElement.props.children, dom);
 	}
 
+}
+
+//porównanie komponentow wirtualnych
+function updateVComponent(prevVComponent, nextVComponent) {
+	const {_instance} = prevVComponent;
+	nextVComponent._instance = _instance;
+	nextVComponent.dom =  prevVComponent.dom;
+	
+	if(prevVComponent.props !== nextVComponent.props) {//jesli propsy dla komponentu sie różnia, to nalezy zakutalizowac komponent faktyczy
+		_instance.props = nextVComponent.props;//przekazanie nowego zestawu propsow do komponentu faktycznego
+		// nextVComponent._instance.updateComponent();
+		const prevElement = _instance._currentElement;
+		const nextElement = _instance.render();//instance musi miec aktualne propsy -> pierwsza linia w if'ie; w tym momencie utworzone zostaje jedynie aktualne wirtualne drzewo
+		_instance._currentElement = nextElement;
+		update(prevElement, nextElement);//dopiero poprzez tą funkcję następują aktulalizacje elementow - musimy porownac 2 wirtualne drzewa i tam gdzie się różnią, tam aktualizujemy DOM, ktory jest podpiety do wirtualnych elementow
+	}
 }
 
 function updateChildren(prevChildren, nextChildren, parentDOMNode) {
@@ -145,11 +162,9 @@ function updateChildren(prevChildren, nextChildren, parentDOMNode) {
 
 function updateVText(prevText, nextText, parentDOMNode) {
 	if(prevText !== nextText) {
-		parentDOMNode.firstChild.nodeValue = nextText;
-		// parentDOMNode.textContent = nextText;
-		// console.log(nextText);
+		// parentDOMNode.firstChild.nodeValue = nextText;
+		parentDOMNode.textContent = nextText;
 	}
-	// console.log(nextText);
 }
 
 class Component {
@@ -174,6 +189,7 @@ class Component {
 		this._currentElement = nextElement;
 
 		// mount(nextRenderedElement, this._parentNode);
+		// console.log(prevElement, nextElement);
 		update(prevElement, nextElement, this._parentNode);
 	}
 
