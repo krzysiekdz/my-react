@@ -128,13 +128,15 @@ function updateVComponent(prevVComponent, nextVComponent) {
 	nextVComponent._instance = _instance;
 	nextVComponent.dom =  prevVComponent.dom;
 	
-	if(prevVComponent.props !== nextVComponent.props) {//jesli propsy dla komponentu sie różnia, to nalezy zakutalizowac komponent faktyczy
+	if(prevVComponent.props !== nextVComponent.props ) {//jesli propsy dla komponentu sie różnia, to nalezy zakutalizowac komponent faktyczy
 		_instance.props = nextVComponent.props;//przekazanie nowego zestawu propsow do komponentu faktycznego
 		// nextVComponent._instance.updateComponent();
-		const prevElement = _instance._currentElement;
-		const nextElement = _instance.render();//instance musi miec aktualne propsy -> pierwsza linia w if'ie; w tym momencie utworzone zostaje jedynie aktualne wirtualne drzewo
-		_instance._currentElement = nextElement;
-		update(prevElement, nextElement);//dopiero poprzez tą funkcję następują aktulalizacje elementow - musimy porownac 2 wirtualne drzewa i tam gdzie się różnią, tam aktualizujemy DOM, ktory jest podpiety do wirtualnych elementow
+		if(_instance.shouldComponentUpdate()) {
+			const prevElement = _instance._currentElement;
+			const nextElement = _instance.render();//instance musi miec aktualne propsy -> pierwsza linia w if'ie; w tym momencie utworzone zostaje jedynie aktualne wirtualne drzewo
+			_instance._currentElement = nextElement;
+			update(prevElement, nextElement);//dopiero poprzez tą funkcję następują aktulalizacje elementow - musimy porownac 2 wirtualne drzewa i tam gdzie się różnią, tam aktualizujemy DOM, ktory jest podpiety do wirtualnych elementow
+		}
 	}
 }
 
@@ -198,6 +200,10 @@ class Component {
 		this.updateComponent();
 	}
 
+	shouldComponentUpdate() {
+		return true;
+	}
+
 
 
 	//will be overridden
@@ -219,6 +225,10 @@ class Header extends Component {
 				'h2', 
 				{style: {color: 'red', height: (this.props.ctr + 20) + 'px'}},
 				`the count is ${this.props.ctr}`);
+	}
+
+	shouldComponentUpdate() {
+		return (this.props.ctr % 2) === 1;
 	}
 }
 
