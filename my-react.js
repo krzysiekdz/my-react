@@ -72,7 +72,7 @@ function mountVComponent(vComponent, parentDOMNode) {
 
 	const nextRenderedElement = instance.render();
 	instance._currentElement = nextRenderedElement;
-	console.log(nextRenderedElement);
+	// console.log(nextRenderedElement);
 	instance._parentNode = parentDOMNode;
 
 	const dom = mount(nextRenderedElement, parentDOMNode);
