@@ -1,6 +1,6 @@
 Wirtualny element to obiekt, ktory posiada wszelkie informacje na podstawie ktorych mozna stworzyc obiekt DOM; obiekt DOM jest duzy, np dwa paragrafy to duze obiekty a moga sie różnić jedynie tekstem w sobie; obiekt wirtualny paragrafu zawierałby w takim razie jedynie tekst - dzieki temu jestemy w stanie szybciej sprawdzic czym dane elementy siê róznią; 
-jesli elementy siê róznia to wtedy odswiezamy element DOM z jakim jest powiazany wirulany element 
-s¹: wirutalne elementy, elementy (DOM - tworzone z wirtulanych elementow); wirtualny element tekstowy i odpowiadajacy mu wezel tekstowy; komponent wirtualny (czyli lekka wersja) oraz komponenty (czyli taka ciezka wersja )
+jesli elementy się róznia to wtedy odswiezamy element DOM z jakim jest powiazany wirulany element 
+są: wirutalne elementy, elementy (DOM - tworzone z wirtulanych elementow); wirtualny element tekstowy i odpowiadajacy mu wezel tekstowy; komponent wirtualny (czyli lekka wersja) oraz komponenty (czyli taka ciezka wersja )
 komponent wirtualny jest normlanie przechowywany w drzewie - do tego sluzy i rowniez ma wszystkie informacje aby zbudowac komponent prawdziwy;
 komponent prawdziwy jest przechowywany w wirutlanym jako referencja; komponent prawdziwy tworzy (render()) element wirtualny ktory jest montowany w dom (ale w tym etapie w jakim jestem, tworzony przez komponent element wirutlany nie jest dodawany do drzewa elementow wirtualnych - to jest blad chyba)
 dzieckiem elementu / komponentu moze byc tekst - i nie musi byc tablica - wtedy jesli to tekst, to taki element zawiera w sobie jedynie tekst, bez dzieci
