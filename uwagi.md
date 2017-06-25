@@ -10,7 +10,7 @@ nastepnie sprawdzamy fragmenty dzrewa i tam gdzie sa roznice to aktualizujemy, b
 
 za kazdym setState zapisujemy jakby stan aplikacji w polu currentElement - niezlaeznie czy byla zmiana czy nie, nowy renderujemy nowe drzewo dla sprawdzenia czy byla, wiec i tak zawsze pameitamy nowe - teraz jest problem, bo przy montowaniu wpisywalismy pewne rzeczy, ktorych potem przy funkcji render juz nie ma - nalezy je dodac wlasnie w updateComponent, zeby ten kolejny byl dalej aktulany
 
-mia³em b³ad polegajacy na tym, ze komponent nie odswieza³ sie, gdy by³ dzieckiem; b³ad polega³ na tym, ze renderujac nowy komponent w updateComponent, propsy by³y nadal stare, bo byly zainicjalizowane jedynie na poczatku przy tworzeniu - nalezy kazdorazowo przekazywac nowe propsy do komponentu, aby wygenerowal nowe drzewo wirtualne
+miałem błąd polegajacy na tym, ze komponent nie odswiezał sie, gdy był dzieckiem; bład polegał na tym, ze renderujac nowy komponent w updateComponent, propsy były nadal stare, bo byly zainicjalizowane jedynie na poczatku przy tworzeniu - nalezy kazdorazowo przekazywac nowe propsy do komponentu, aby wygenerowal nowe drzewo wirtualne
 
 komponenty generuja drzewa wirtualne; komponent moze takze byc w drzewie wirtualnym
 
@@ -19,13 +19,13 @@ gdy komponent zmienia stan, to jest renderowany od nowa i sprawdzany pod wzglede
 w updateVComponent nie moge uzyc updateComponent, bo w updateComponent aktualizujê state od this._pendingState, ktory nadpisze mi po prostu aktulany state -> nalezy przepisac czesc kodu po prostu do udpateVComponent i juz (dopiero setState ustawia pendingState i wtedy dopiero mozna uzyc updateComponent)
 
 
-stan dzia³a tak, ze gdy zajdzie w nim zmiana, to renderujemy ponownie komponent (i jemu podlegle) - tworzymy po prostu nowe drzewo wirtualne; metoda setState uruchamiamy mechanizm sprawdzania dzrewa wirtualnego dla komponentu, ktoremu stan sie zmienil - co ciekawe, nie sprawdzamy stanu, ale elementy w drzewie ktore zmienily sie pod wplywem zmiany stanu
+stan działa tak, ze gdy zajdzie w nim zmiana, to renderujemy ponownie komponent (i jemu podlegle) - tworzymy po prostu nowe drzewo wirtualne; metoda setState uruchamiamy mechanizm sprawdzania dzrewa wirtualnego dla komponentu, ktoremu stan sie zmienil - co ciekawe, nie sprawdzamy stanu, ale elementy w drzewie ktore zmienily sie pod wplywem zmiany stanu
 
-metodê render traktowac jako metodê ktora updateuje komponent - jest ona bowiem wywolywana zawsze gdy sprawdzamy aktualny stan komponentu - pobiera ona wtedy aktualne wartosci state i props i renderuje nowa zawartosc (tzn elementy wirtualne); te wirualne drzewo jest wtedy porownwywane z ostatnim aktualnym - gdy jakies wartosc sa niekatulne, drzewo DOM jest aktualizowane
+metodę render traktowac jako metodê ktora updateuje komponent - jest ona bowiem wywolywana zawsze gdy sprawdzamy aktualny stan komponentu - pobiera ona wtedy aktualne wartosci state i props i renderuje nowa zawartosc (tzn elementy wirtualne); te wirualne drzewo jest wtedy porownwywane z ostatnim aktualnym - gdy jakies wartosc sa niekatulne, drzewo DOM jest aktualizowane
 
-patrzec na render jako metode aktualizuj¹c¹
+patrzec na render jako metode aktualizującą
 
-jesli gdzie robiê aktuliazjaê stanu:
+jesli gdzieś robię aktuliazcję stanu:
 	selectItem(item) {
     	this.setState({selectedItem: item});
     }
