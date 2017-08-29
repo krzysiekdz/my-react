@@ -124,14 +124,15 @@ function updateVElement(prevElement, nextElement) {
 
 //porównanie komponentow wirtualnych
 function updateVComponent(prevVComponent, nextVComponent) {
-	const {_instance} = prevVComponent;
+	const {_instance} = prevVComponent;//czy przypadkiem instance nie powinno byc prevVComponent.instance?
 	nextVComponent._instance = _instance;
 	nextVComponent.dom =  prevVComponent.dom;
 	
+	//to tutaj sa wywolywane metody cyklu zycia komponentu, tj component will receive props itd
 	if(prevVComponent.props !== nextVComponent.props ) {//jesli propsy dla komponentu sie różnia, to nalezy zakutalizowac komponent faktyczy
 		_instance.props = nextVComponent.props;//przekazanie nowego zestawu propsow do komponentu faktycznego
 		// nextVComponent._instance.updateComponent();
-		if(_instance.shouldComponentUpdate()) {
+		if(_instance.shouldComponentUpdate()) {//powinnismy tu przekazac nowe props i nowy state
 			const prevElement = _instance._currentElement;
 			const nextElement = _instance.render();//instance musi miec aktualne propsy -> pierwsza linia w if'ie; w tym momencie utworzone zostaje jedynie aktualne wirtualne drzewo
 			_instance._currentElement = nextElement;
