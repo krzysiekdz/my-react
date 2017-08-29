@@ -1,0 +1,25 @@
+w react mamy komponenty, ktore posiadaja stan oraz odwolanie do elementu DOM - stanowi¹ ca³oœc
+w angular mamy scope ktory zawiera stan - oraz listenery, ktore wywoluja siê, jesli stan ulegl zmianie (przy wywolaniu digest) - angular dopiero przy dyrektywach wprowadza powi¹zania z elementami DOM - impelentujac angulara poczatkowo, nie spotykamy sie w ogole z modelem DOM - scope, expressions, DI - wszystko to jest mechanizmem angulara, ktory jednak nie dotyka jeszcze sposobu powiazania modelu z widokiem; react odrazu wi¹¿e model z widokiem
+
+w react sprawdzenie stanu komponentu nastepuje w metodzie updateComponent:
+		if(this._pendingState !== prevState) {
+			this.state = this._pendingState;
+		}
+w angular sprawdzenie stanu nastepuje w digest (digestOnce - areEqual)
+
+setState - ustawia tak naprawde przekazane dane w polu pendingState - i wywoluje updateComponent - wtedy w updateComponent sprawdzane jest pending state oraz state i w razie zmian miedzy state oraz pendingState jest robiona aktualizacja state - zmiany w elemencie powinny byc chyba tylko wtedy kiedy state ulega zmianie
+
+ciekawe czy jesli state nie ulegl zmianie, a jakis props komponentu sie zmienil to czy zmiany beda widoczne po wywolaniu setState z pustym obiektme - w tej implemntacji tak, bo niezaleznie od state, stan jest odswiezany - stary i nowy wirtualny element sa porównywane i tam gdzie sie roznia, w DOM jest zapisywana roznica (zamiast instalowac nowy wirtualny element, jedynie go porówunjê ze starym)
+
+render polega na utworzeniu nowego elementu wirtualnego z aktualnymi wartosciami (pobieranymi z komponentu, nie tylko z pola state, ale tez props) - a wiec state nie musi ulec zmianie, po prostu trzeba wywolac setState
+
+na koncu updateComponent jest wywolywana funkcja update - polega ona na sprawdzeniu stanu wirtualnego elementu nowo utworzonego oraz tego juz istniajacego i dokonnaniu zmian na obiekcie DOM - tym juz istniej¹cym - czyli porównujemy stany elementow wirtualnych (wirtualny DOM) a zmiany nanosimy dopiero w obiektach faktycznych
+
+w drzewach jakie porównujemy moga znajdowac sie elementy wirutalne oraz komponenty wirutalne - bo kazde takie drzewo jest tworzone poprzez render, a wiec zawiera jedynie elementy wirtualne - te faktyczne lementy DOM nie sa tworzone od nowa - montowanie - czyli tworzenie DOM na podstawie leemnetow wirtualnych, jest wykonywane tylko raz; porównywanie komponentow zachodzi miedyz komponentami wirtualnymi - sprawdzane sa propsy
+
+w react komponent moze byc odswiezany w dwoch miejsach - gdy porównujemy komponenty poprez update (wtedy patrzymy na propsy - porwnujujemy tylko na poczatku komponenty wirtulane) - jesli komponenty wirtualne róznia sie propsami to wtedy z tego nowego renderujemy drzewo wirtualnych elementow - porównujemy je z tym poprzednim - porównywanie komponentow sprowadza sie do porównania komponentow wirtualnych a w przypadku roznic - do porównania drzew wirtualnych i naniesienia zmian - bo to z drzew wirtualnych nanosimy zmiany - bo to drzewa wirtualne zawieraja odniesienia do elementow DOM
+
+react zaklada ze bedziemy modyfikowali state w taki sposob, aby nowo dodane zmiany nie modyfikowaly starego obiektu danych - czyli za kazdym razem tworzymy nowy obiekt danych (poprzez skopiowanie starego) - dzieki temu react od razu rozpozna, ze dane zostaly zmodyfikowane (nie bedzie musial robic wielu porównañ)
+
+react - porównywanie elementow i po co uzywac key prop
+https://facebook.github.io/react/docs/reconciliation.html

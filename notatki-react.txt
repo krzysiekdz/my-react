@@ -1,0 +1,13 @@
+model DOM jest w pamieci programu (nie w pamieci java script); gdy odwolujemy sie w skrypcie do DOM, to wtedy wybrane elementy DOM trafiaja do przestrzeni pamieci java script; odwolania do DOM s¹ wiec wolne, bo trzeba siegnac po wybrany element DOM do pameici programu i przeniesc go do przestrzeni java script; 
+wirtualne drzewo - caly stan mamy w javascript i porównania wykonujemy na java script - jesli cos sie zmienia, wtedy odwolujemy sie do DOM
+
+budowanie strony internetowej to de facto budowanie drzewa DOM - drzewo to powstaje w pamieci programu (tj w przegladarce)
+budowac to drzewo mozna poprzez przekazanie przegladarce kodu strony html - wtedy przegladarka przeanazliuje ten dokument i wygeneruje w sobie odpowiedne drzewo DOM 
+mozna rowniec zbudowac DOM poprzez wywolania kodu javascript - document.createElement
+obie metody sa rownowazne (co do szybkosci obu nie wiem ktora szybsza - html wymaga parsowania kodu html, java script wymaga wykonania kodu javascript i wywolan funkcji)
+
+vElement - wirtualny element, np {tag: div, className:"alert alert-warning"}
+mountVElement - tworzenie elementu DOM z wirtulnaego obiektu (tworzenie obiektu z receptury/przepisu)
+montowanie - tworzymy obiekt DOM o okreslonym tagu, podpinamy go do rodzica (musimy go umiescic gdzies w modelu DOM, zeby mial wplyw na strone - przekazanie parentNode); zapamietujemy dany obiekt DOM w wirtualnym elemencie zeby miec do neigo referencjê; ustawiamy atrybuty
+
+kolejna opcja - dodawanie dzieci - props: children - czyli mozliwsco zagniezdzania jak w html
